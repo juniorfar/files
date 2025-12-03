@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Match3 Rewards</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; display:flex; flex-direction:column; align-items:center;}
+    header { background:#2a9d8f; width:100%; color:white; padding:12px 16px; box-sizing:border-box; }
+    main { padding:16px; max-width:900px; width:100%;}
+    #gameCanvas { border:1px solid #333; background:#f7f7f7; display:block; margin:12px 0; }
+    .panel { border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px;}
+    label,input { display:block; margin:6px 0; }
+    .btn { background:#264653; color:white; padding:8px 12px; border:none; border-radius:4px; cursor:pointer;}
+    .btn:disabled { opacity:0.6; cursor:not-allowed;}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Match3 Rewards</h1>
+  </header>
+  <main>
+    <section class="panel">
+      <h2>Game (demo)</h2>
+      <canvas id="gameCanvas" width="400" height="400"></canvas>
+      <p>Your points: <span id="points">100</span></p>
+      <button id="earn" class="btn">Earn 10 points (demo)</button>
+    </section>
+
+    <section class="panel">
+      <h2>Withdraw to PayPal</h2>
+      <!-- IMPORTANT: Real sites must require user login and server-side balance check -->
+      <form id="withdrawForm">
+        <label for="paypalEmail">PayPal email</label>
+        <input id="paypalEmail" name="paypalEmail" type="email" required />
+
+        <label for="amount">Amount (USD)</label>
+        <input id="amount" name="amount" type="number" min="1" step="0.01" required />
+
+        <button id="withdrawBtn" type="submit" class="btn">Request Payout</button>
+      </form>
+      <div id="status" style="margin-top:8px;"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Admin / Info</h2>
+      <p>This demo uses a simple server endpoint at <code>/api/request_payout.php</code> to demonstrate a MassPay call to PayPal Classic (NVP). Do not use in production without server-side authentication and balance checks.</p>
+    </section>
+  </main>
+
+  <script src="assets/game.js"></script>
+  <script>
+    (function(){
+      const pointsEl = document.getElementById('points');
+      let points = 100;
+
+      document.getElementById('earn').addEventListener('click', () => {
+        points += 10;
+        pointsEl.textContent = points;
+      });
+
+      document.getElementById('withdrawForm').addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        // Client-side demonstration only. Server must verify balance and auth.
+        const email = document.getElementById('paypalEmail').value;
+        const amount = parseFloat(document.getElementById('amount').value);
+
+        const statusEl = document.getElementById('status');
+        statusEl.textContent = 'Submitting payout request...';
+
+        // Demo: check simple client-side points vs amount (UNTRUSTED)
+        const usdPerPoint = 0.01; // demo conversion: 1 point = $0.01
+        const requiredPoints = Math.ceil(amount / usdPerPoint);
+        if (requiredPoints > points) {
+          statusEl.textContent = 'Insufficient points (demo check).';
+          return;
+        }
+
+        const resp = await fetch('/api/request_payout.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ paypalEmail: email, amount: amount })
+        }).then(r => r.json()).catch(e => ({ error: String(e) }));
+
+        if (resp.success) {
+          statusEl.textContent = 'Payout request submitted. Server response: ' + resp.message;
+          // Deduct demo points
+          points -= requiredPoints;
+          pointsEl.textContent = points;
+        } else {
+          statusEl.textContent = 'Payout failed: ' + (resp.message || resp.error || 'unknown');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
