@@ -1,0 +1,16 @@
+[Unit]
+Description=Gunicorn instance to serve file.match3onlinerewareds PayPal microservice
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/file.match3onlinerewareds.gamer.gd/python_ms
+Environment=PY_MS_API_KEY=replace_with_strong_api_key_used_by_php_app
+EnvironmentFile=/var/www/file.match3onlinerewareds.gamer.gd/.env.production
+ExecStart=/var/www/file.match3onlinerewareds.gamer.gd/python_ms/venv/bin/gunicorn --workers 3 --bind 127.0.0.1:5000 app:app
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

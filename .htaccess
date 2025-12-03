@@ -1,0 +1,18 @@
+# If your hosting uses Apache (InfinityFree or similar) you can use this .htaccess
+# Place in /public_html to redirect or block demo index and enforce HTTPS
+# Note: InfinityFree may limit custom server configs; adapt to control panel.
+
+# Force HTTPS
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Block the old demo game assets (optional). Return 410 Gone for demo assets.
+RewriteRule ^assets/game.js$ - [G]
+RewriteRule ^index.html$ - [G]
+
+# Protect config files
+<FilesMatch "(^config\/.*|^\.env$)">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
