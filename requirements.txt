@@ -1,0 +1,5 @@
+flask>=2.0
+requests>=2.28
+python-dotenv>=1.0
+# Optional: the official PayPal server SDK (if you later want to use it)
+# pip install paypal-server-sdk==1.1.0
