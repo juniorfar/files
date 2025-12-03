@@ -28,4 +28,9 @@ return [
     // The webhook ID PayPal gives you when you register your webhook URL in the PayPal Dashboard.
     // Set this to the webhook id for your registered webhook (sandbox or live depending on env).
     'https://match3onlinerewards.gamer.gd' => '027476735E133874M',
+
+curl -v -X POST "https://api-m.sandbox.paypal.com/v1/oauth2/token" \
+ -u "ARRrOcdVX_N7KNHLuO_DLTWvM_QWN2imRTaGRyhlEJSdJI2j0_0xf2cqDRSxJZOT3b9g3Iv8o_I5LCko:EM1hLNhpLmXS52PFnPgjQoUijFSAKRX7Lkw6QhhmrPp0KXXR0K52tdn2VNHCzNv-ZcUK-0ky1yXlCw-q" \
+ -H "Content-Type: application/x-www-form-urlencoded" \
+ -d "grant_type=client_credentials"
 ];
